@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- "Dangerous" permissions - the OS also makes us ask the user for these
+         at runtime (see ContactListActivity), declaring them here is not enough. -->
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Ft_hangouts">
+        <!-- A leading "." is shorthand for the app's namespace (see build.gradle.kts).
+             ".ui.ContactListActivity" expands to com.lorbke.ft_hangouts.ui.ContactListActivity. -->
+        <activity
+            android:name=".ui.ContactListActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.ContactDetailActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.ContactFormActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.ConversationActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- exported="true" is required because the intent-filter below matches
+             a broadcast the SYSTEM sends. android:permission="BROADCAST_SMS"
+             means only the OS itself (which holds that permission) is allowed
+             to trigger this receiver - a random other app can't spoof a fake text. -->
+        <receiver
+            android:name=".sms.SmsReceiver"
+            android:exported="true"
+            android:permission="android.permission.BROADCAST_SMS">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

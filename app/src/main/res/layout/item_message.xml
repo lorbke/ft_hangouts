@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One message bubble. FrameLayout lets us push the TextView to the left
+     (received) or right (sent) side by changing its gravity in code. -->
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="12dp"
+    android:paddingVertical="4dp">
+
+    <TextView
+        android:id="@+id/messageBody"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:maxWidth="260dp"
+        android:padding="12dp"
+        android:background="@drawable/bubble_incoming"
+        android:textAppearance="?attr/textAppearanceBodyMedium" />
+
+</FrameLayout>
