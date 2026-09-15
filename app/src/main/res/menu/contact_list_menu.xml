@@ -5,4 +5,8 @@
         android:id="@+id/action_header_color"
         android:title="@string/change_header_color"
         android:showAsAction="never" />
+    <item
+        android:id="@+id/action_change_language"
+        android:title="@string/change_language"
+        android:showAsAction="never" />
 </menu>

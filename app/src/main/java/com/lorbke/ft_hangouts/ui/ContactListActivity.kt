@@ -9,6 +9,8 @@ import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
@@ -87,6 +89,10 @@ class ContactListActivity : AppCompatActivity() {
             showHeaderColorPicker()
             return true
         }
+        if (item.itemId == R.id.action_change_language) {
+            showLanguagePicker()
+            return true
+        }
         return super.onOptionsItemSelected(item)
     }
 
@@ -104,6 +110,25 @@ class ContactListActivity : AppCompatActivity() {
             .setItems(colorNames) { _, which ->
                 Prefs.setHeaderColor(this, colorValues[which])
                 toolbar.setBackgroundColor(colorValues[which])
+            }
+            .show()
+    }
+
+    private fun showLanguagePicker() {
+        // Language names are shown in their own language, not translated -
+        // the same way every app's language picker does it.
+        val languageNames = arrayOf("English", "Deutsch")
+        val languageTags = arrayOf("en", "de")
+
+        AlertDialog.Builder(this)
+            .setTitle(R.string.change_language)
+            .setItems(languageNames) { _, which ->
+                // Overrides the app's language independently of the device's
+                // system language. AppCompatDelegate saves this choice for us
+                // (it survives restarts on its own) and recreates this screen
+                // to apply it immediately.
+                val locales = LocaleListCompat.forLanguageTags(languageTags[which])
+                AppCompatDelegate.setApplicationLocales(locales)
             }
             .show()
     }

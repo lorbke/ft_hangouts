@@ -18,4 +18,5 @@
     <string name="contact_deleted">Kontakt gelöscht</string>
     <string name="sms_permission_required">SMS-Berechtigung erforderlich, um Nachrichten zu senden</string>
     <string name="choose_photo">Foto auswählen</string>
+    <string name="change_language">Sprache ändern</string>
 </resources>

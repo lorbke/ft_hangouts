@@ -19,4 +19,5 @@
     <string name="contact_deleted">Contact deleted</string>
     <string name="sms_permission_required">SMS permission is required to send messages</string>
     <string name="choose_photo">Choose photo</string>
+    <string name="change_language">Change language</string>
 </resources>
