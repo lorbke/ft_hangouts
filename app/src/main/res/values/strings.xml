@@ -20,4 +20,5 @@
     <string name="sms_permission_required">SMS permission is required to send messages</string>
     <string name="choose_photo">Choose photo</string>
     <string name="change_language">Change language</string>
+    <string name="backgrounded_at">App was backgrounded at %1$s</string>
 </resources>

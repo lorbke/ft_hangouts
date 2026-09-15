@@ -10,6 +10,7 @@ object Prefs {
 
     private const val PREFS_NAME = "ft_hangouts_prefs"
     private const val KEY_HEADER_COLOR = "header_color"
+    private const val KEY_BACKGROUND_TIMESTAMP = "background_timestamp"
     private val DEFAULT_HEADER_COLOR = Color.parseColor("#6750A4")
 
     fun getHeaderColor(context: Context): Int {
@@ -20,5 +21,24 @@ object Prefs {
     fun setHeaderColor(context: Context, color: Int) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit().putInt(KEY_HEADER_COLOR, color).apply()
+    }
+
+    fun setBackgroundTimestamp(context: Context, timestamp: Long) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit().putLong(KEY_BACKGROUND_TIMESTAMP, timestamp).apply()
+    }
+
+    // Returns the saved timestamp AND clears it in one go, so the toast that
+    // reads this only ever shows once per time the app actually left the
+    // background - not again on every later onResume. Null means "the app
+    // hasn't been backgrounded since we last showed this."
+    fun consumeBackgroundTimestamp(context: Context): Long? {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        if (!prefs.contains(KEY_BACKGROUND_TIMESTAMP)) {
+            return null
+        }
+        val timestamp = prefs.getLong(KEY_BACKGROUND_TIMESTAMP, 0)
+        prefs.edit().remove(KEY_BACKGROUND_TIMESTAMP).apply()
+        return timestamp
     }
 }

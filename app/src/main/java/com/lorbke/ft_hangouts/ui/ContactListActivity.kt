@@ -4,8 +4,10 @@ import android.Manifest
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +21,7 @@ import com.lorbke.ft_hangouts.R
 import com.lorbke.ft_hangouts.data.Contact
 import com.lorbke.ft_hangouts.data.ContactRepository
 import com.lorbke.ft_hangouts.data.Prefs
+import java.util.Date
 
 // The home screen: shows every contact as a list, read from SQLite.
 class ContactListActivity : AppCompatActivity() {
@@ -74,6 +77,15 @@ class ContactListActivity : AppCompatActivity() {
             val intent = Intent(this, ContactDetailActivity::class.java)
             intent.putExtra(Contact.EXTRA_ID, contact.id)
             startActivity(intent)
+        }
+
+        // If the whole app was backgrounded since we last checked (tracked
+        // by FtHangoutsApp), show when. Returns null on a normal first
+        // launch, or if we already showed this same background period.
+        val backgroundTimestamp = Prefs.consumeBackgroundTimestamp(this)
+        if (backgroundTimestamp != null) {
+            val time = DateFormat.getTimeFormat(this).format(Date(backgroundTimestamp))
+            Toast.makeText(this, getString(R.string.backgrounded_at, time), Toast.LENGTH_LONG).show()
         }
     }
 
