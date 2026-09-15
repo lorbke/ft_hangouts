@@ -13,6 +13,7 @@ import com.lorbke.ft_hangouts.R
 import com.lorbke.ft_hangouts.data.Contact
 import com.lorbke.ft_hangouts.data.ContactRepository
 import com.lorbke.ft_hangouts.data.PhotoStorage
+import com.lorbke.ft_hangouts.data.Prefs
 
 // Shows one contact's details, looked up in SQLite by the id passed in the Intent.
 class ContactDetailActivity : AppCompatActivity() {
@@ -29,6 +30,7 @@ class ContactDetailActivity : AppCompatActivity() {
 
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         toolbar.title = contact.firstName + " " + contact.lastName
+        toolbar.setBackgroundColor(Prefs.getHeaderColor(this))
 
         PhotoStorage.showInto(findViewById<ImageView>(R.id.detailPhoto), contact.photoUri, 240)
         findViewById<TextView>(R.id.detailPhone).text = contact.phoneNumber

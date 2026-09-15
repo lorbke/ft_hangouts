@@ -14,6 +14,7 @@ import com.lorbke.ft_hangouts.R
 import com.lorbke.ft_hangouts.data.Contact
 import com.lorbke.ft_hangouts.data.ContactRepository
 import com.lorbke.ft_hangouts.data.PhotoStorage
+import com.lorbke.ft_hangouts.data.Prefs
 
 // One screen, two jobs: creating a brand new contact, or editing an existing
 // one. If the Intent that started us carries a contact id that actually
@@ -49,6 +50,7 @@ class ContactFormActivity : AppCompatActivity() {
 
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         toolbar.setTitle(if (isEditMode) R.string.edit_contact else R.string.add_contact)
+        toolbar.setBackgroundColor(Prefs.getHeaderColor(this))
 
         val firstNameInput = findViewById<TextInputEditText>(R.id.firstNameInput)
         val lastNameInput = findViewById<TextInputEditText>(R.id.lastNameInput)

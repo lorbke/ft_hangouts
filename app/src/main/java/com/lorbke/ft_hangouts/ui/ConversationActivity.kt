@@ -15,6 +15,7 @@ import com.lorbke.ft_hangouts.R
 import com.lorbke.ft_hangouts.data.Contact
 import com.lorbke.ft_hangouts.data.ContactRepository
 import com.lorbke.ft_hangouts.data.MessageRepository
+import com.lorbke.ft_hangouts.data.Prefs
 import com.lorbke.ft_hangouts.sms.SmsSender
 
 // Shows the message thread with one contact and lets you send new ones.
@@ -36,6 +37,7 @@ class ConversationActivity : AppCompatActivity() {
 
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         toolbar.title = contact.firstName + " " + contact.lastName
+        toolbar.setBackgroundColor(Prefs.getHeaderColor(this))
 
         val messages = messageRepository.getByContact(contactId).toMutableList()
         val adapter = MessageAdapter(messages)

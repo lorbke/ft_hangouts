@@ -16,6 +16,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.lorbke.ft_hangouts.R
 import com.lorbke.ft_hangouts.data.Contact
 import com.lorbke.ft_hangouts.data.ContactRepository
+import com.lorbke.ft_hangouts.data.Prefs
 
 // The home screen: shows every contact as a list, read from SQLite.
 class ContactListActivity : AppCompatActivity() {
@@ -47,6 +48,8 @@ class ContactListActivity : AppCompatActivity() {
         // Registers our Toolbar as the screen's action bar, which is what makes
         // onCreateOptionsMenu / onOptionsItemSelected below get called.
         setSupportActionBar(toolbar)
+        // Apply whatever header color was saved last time (or the default).
+        toolbar.setBackgroundColor(Prefs.getHeaderColor(this))
 
         contactList = findViewById(R.id.contactList)
         contactList.layoutManager = LinearLayoutManager(this)
@@ -99,6 +102,7 @@ class ContactListActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setTitle(R.string.change_header_color)
             .setItems(colorNames) { _, which ->
+                Prefs.setHeaderColor(this, colorValues[which])
                 toolbar.setBackgroundColor(colorValues[which])
             }
             .show()
