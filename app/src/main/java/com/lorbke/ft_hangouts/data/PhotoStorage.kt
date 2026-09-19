@@ -10,10 +10,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
 
-// Copies a picture the user picked into the app's own private storage, and
-// loads it back for display. We never keep the picker's original content://
-// URI around - those can stop working later (permission revoked, the app
-// that owned the file uninstalled), so we make our own permanent copy.
+// need to copy the picture into the apps private storage to make sure it remains accessible
 object PhotoStorage {
 
     fun copyToAppStorage(context: Context, sourceUri: Uri): String {
@@ -32,10 +29,7 @@ object PhotoStorage {
         return destFile.absolutePath
     }
 
-    // Loads a bitmap downsized to roughly reqSize x reqSize pixels, so a
-    // handful of full-resolution photos don't blow up the app's memory.
-    private fun loadThumbnail(path: String, reqSize: Int): Bitmap? {
-        // First pass: read only the image's dimensions, not its pixels.
+    private fun resize(path: String, reqSize: Int): Bitmap? {
         val bounds = BitmapFactory.Options()
         bounds.inJustDecodeBounds = true
         BitmapFactory.decodeFile(path, bounds)
@@ -45,16 +39,13 @@ object PhotoStorage {
             sampleSize *= 2
         }
 
-        // Second pass: actually decode, at 1/sampleSize resolution.
         val options = BitmapFactory.Options()
         options.inSampleSize = sampleSize
         return BitmapFactory.decodeFile(path, options)
     }
 
-    // Shows a contact's photo in an ImageView, falling back to the default
-    // avatar if there is none (or the file is somehow gone).
-    fun showInto(imageView: ImageView, photoPath: String?, reqSize: Int) {
-        val bitmap = if (photoPath != null) loadThumbnail(photoPath, reqSize) else null
+    fun showPhoto(imageView: ImageView, photoPath: String?, reqSize: Int) {
+        val bitmap = if (photoPath != null) resize(photoPath, reqSize) else null
         if (bitmap != null) {
             imageView.setImageBitmap(bitmap)
         } else {

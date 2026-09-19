@@ -15,7 +15,6 @@ import com.lorbke.ft_hangouts.data.ContactRepository
 import com.lorbke.ft_hangouts.data.PhotoStorage
 import com.lorbke.ft_hangouts.data.Prefs
 
-// Shows one contact's details, looked up in SQLite by the id passed in the Intent.
 class ContactDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,14 +24,13 @@ class ContactDetailActivity : AppCompatActivity() {
         val contactRepository = ContactRepository(this)
         // retrieves whatever ContactListActivity stored under that key before starting this activity
         val contactId = intent.getLongExtra(Contact.EXTRA_ID, 0)
-        // Bail out if the id is missing/invalid - nothing to show.
         val contact = contactRepository.getById(contactId) ?: return
 
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         toolbar.title = contact.firstName + " " + contact.lastName
         toolbar.setBackgroundColor(Prefs.getHeaderColor(this))
 
-        PhotoStorage.showInto(findViewById<ImageView>(R.id.detailPhoto), contact.photoUri, 240)
+        PhotoStorage.showPhoto(findViewById<ImageView>(R.id.detailPhoto), contact.photoUri, 240)
         findViewById<TextView>(R.id.detailPhone).text = contact.phoneNumber
         findViewById<TextView>(R.id.detailEmail).text = contact.email
         findViewById<TextView>(R.id.detailAddress).text = contact.address
@@ -56,8 +54,6 @@ class ContactDetailActivity : AppCompatActivity() {
         }
 
         findViewById<MaterialButton>(R.id.callButton).setOnClickListener {
-            // Hands off to the system Dialer app - a real Android feature,
-            // nothing mocked here.
             val callIntent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + contact.phoneNumber))
             startActivity(callIntent)
         }

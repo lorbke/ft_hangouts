@@ -4,8 +4,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 
-// The only class allowed to run SQL for contacts. Activities call these
-// methods instead of touching SQLite (or DbHelper) directly.
 class ContactRepository(context: Context) {
 
     private val dbHelper = DbHelper(context)
@@ -17,8 +15,7 @@ class ContactRepository(context: Context) {
             "contact", null, null, null, null, null,
             "first_name ASC"
         )
-        // cursor.use{} closes the cursor automatically when the block ends,
-        // even if something inside throws - like try/finally, but built in.
+        // cursor.use{} closes the cursor (and the db resource) automatically when the block ends, even if something inside throws
         cursor.use {
             while (it.moveToNext()) {
                 contacts.add(contactFromCursor(it))
@@ -40,7 +37,6 @@ class ContactRepository(context: Context) {
         return null
     }
 
-    // Returns the id SQLite assigned to the new row.
     fun insert(contact: Contact): Long {
         val db = dbHelper.writableDatabase
         return db.insert("contact", null, contactToValues(contact))
@@ -56,15 +52,11 @@ class ContactRepository(context: Context) {
         db.delete("contact", "_id = ?", arrayOf(id.toString()))
     }
 
-    // Used by the sms layer to match an incoming message's sender number
-    // against a saved contact. Loads everything and filters in Kotlin with
-    // PhoneUtils - simple, and plenty fast for a personal contact list.
     fun findByPhoneNumber(number: String): Contact? {
         return getAll().firstOrNull { PhoneUtils.matches(it.phoneNumber, number) }
     }
 
-    // Bonus behaviour: an unknown sender becomes a new contact, named after
-    // their number.
+    // bonus shit
     fun findOrCreateByPhoneNumber(number: String): Contact {
         val existing = findByPhoneNumber(number)
         if (existing != null) {
@@ -82,7 +74,6 @@ class ContactRepository(context: Context) {
         return newContact.copy(id = newId)
     }
 
-    // ContentValues is Android's key/value bag for one row going INTO the database.
     private fun contactToValues(contact: Contact): ContentValues {
         val values = ContentValues()
         values.put("first_name", contact.firstName)
@@ -90,12 +81,10 @@ class ContactRepository(context: Context) {
         values.put("phone_number", contact.phoneNumber)
         values.put("email", contact.email)
         values.put("address", contact.address)
-        // ContentValues.put accepts a null String fine - stores SQL NULL.
         values.put("photo_uri", contact.photoUri)
         return values
     }
 
-    // The reverse direction: one row coming OUT of a query result.
     private fun contactFromCursor(cursor: Cursor): Contact {
         val photoIndex = cursor.getColumnIndexOrThrow("photo_uri")
         return Contact(

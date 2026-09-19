@@ -10,9 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lorbke.ft_hangouts.R
 import com.lorbke.ft_hangouts.data.Message
 
-// Same idea as ContactAdapter: turns a list of Message objects into rows.
-// The only difference is onBindViewHolder also flips alignment + color
-// depending on who sent the message.
 class MessageAdapter(private val messages: MutableList<Message>) :
     RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
 

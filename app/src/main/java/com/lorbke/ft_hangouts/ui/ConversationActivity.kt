@@ -14,14 +14,11 @@ import com.google.android.material.button.MaterialButton
 import com.lorbke.ft_hangouts.R
 import com.lorbke.ft_hangouts.data.Contact
 import com.lorbke.ft_hangouts.data.ContactRepository
+import com.lorbke.ft_hangouts.data.Message
 import com.lorbke.ft_hangouts.data.MessageRepository
 import com.lorbke.ft_hangouts.data.Prefs
 import com.lorbke.ft_hangouts.sms.SmsSender
 
-// Shows the message thread with one contact and lets you send new ones.
-// Sending now goes through SmsSender, which both places the real text
-// message and logs it to SQLite. Receiving is handled separately by
-// SmsReceiver - this screen just displays whatever is already in the database.
 class ConversationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +27,6 @@ class ConversationActivity : AppCompatActivity() {
 
         val contactRepository = ContactRepository(this)
         val messageRepository = MessageRepository(this)
-        val smsSender = SmsSender(this)
 
         val contactId = intent.getLongExtra(Contact.EXTRA_ID, 0)
         val contact = contactRepository.getById(contactId) ?: return
@@ -55,8 +51,17 @@ class ConversationActivity : AppCompatActivity() {
 
             if (text.isNotEmpty()) {
                 if (hasSendPermission) {
-                    val message = smsSender.send(contact.phoneNumber, contactId, text)
-                    messages.add(message)
+                    SmsSender.send(contact.phoneNumber, text)
+
+                    val newMessage = Message(
+                        contactId = contactId,
+                        body = text,
+                        timestamp = System.currentTimeMillis(),
+                        isIncoming = false
+                    )
+                    messageRepository.insert(newMessage)
+                    messages.add(newMessage)
+
                     adapter.notifyItemInserted(messages.size - 1)
                     messageList.scrollToPosition(messages.size - 1)
                     messageInput.setText("")

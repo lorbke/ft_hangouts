@@ -28,10 +28,6 @@ object Prefs {
         prefs.edit().putLong(KEY_BACKGROUND_TIMESTAMP, timestamp).apply()
     }
 
-    // Returns the saved timestamp AND clears it in one go, so the toast that
-    // reads this only ever shows once per time the app actually left the
-    // background - not again on every later onResume. Null means "the app
-    // hasn't been backgrounded since we last showed this."
     fun consumeBackgroundTimestamp(context: Context): Long? {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         if (!prefs.contains(KEY_BACKGROUND_TIMESTAMP)) {

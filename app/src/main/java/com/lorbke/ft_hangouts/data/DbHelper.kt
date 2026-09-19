@@ -4,10 +4,6 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
-// Wraps Android's SQLite API. SQLiteOpenHelper creates the database file the
-// first time the app runs (onCreate) and knows how to upgrade it later if we
-// change the schema (onUpgrade). Nothing outside the data package should
-// import this directly - go through ContactRepository / MessageRepository.
 class DbHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
@@ -45,7 +41,7 @@ class DbHelper(context: Context) :
             """
         )
 
-        // A few starter contacts so the app isn't an empty screen on first launch.
+        // some mock data
         db.execSQL(
             "INSERT INTO contact (first_name, last_name, phone_number, email, address) " +
                 "VALUES ('Ada', 'Lovelace', '+49 151 00000001', 'ada@example.com', '1 Analytical Engine Rd')"
@@ -61,9 +57,6 @@ class DbHelper(context: Context) :
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        // Simplest possible upgrade: wipe and recreate. Fine while the
-        // schema is still changing during development; a shipped app would
-        // ALTER TABLE instead of throwing the user's data away.
         db.execSQL("DROP TABLE IF EXISTS message")
         db.execSQL("DROP TABLE IF EXISTS contact")
         onCreate(db)
@@ -71,8 +64,6 @@ class DbHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "ft_hangouts.db"
-        // Bumped when the contact table gained photo_uri - triggers onUpgrade
-        // on any device that already had version 1 installed.
         private const val DATABASE_VERSION = 2
     }
 }

@@ -16,26 +16,16 @@ import com.lorbke.ft_hangouts.data.ContactRepository
 import com.lorbke.ft_hangouts.data.PhotoStorage
 import com.lorbke.ft_hangouts.data.Prefs
 
-// One screen, two jobs: creating a brand new contact, or editing an existing
-// one. If the Intent that started us carries a contact id that actually
-// exists in the database, we are in "edit" mode and pre-fill the fields;
-// otherwise we start blank ("create" mode).
+// screen for creating or editing a contact
 class ContactFormActivity : AppCompatActivity() {
 
-    // Path to the photo (in our own storage) that will be saved with this
-    // contact - null means no photo. Needs to be a class property because it
-    // is set from inside the pickPhoto callback, then read later when Save
-    // is tapped - two different points in time, not one straight-line call.
     private var selectedPhotoPath: String? = null
 
-    // Wires up the system photo picker. Like the SMS permission launcher in
-    // ContactListActivity, this must be registered unconditionally before
-    // the screen is shown, so it lives here as a property, not inside onCreate.
     private val pickPhoto =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
                 selectedPhotoPath = PhotoStorage.copyToAppStorage(this, uri)
-                PhotoStorage.showInto(findViewById(R.id.photoPreview), selectedPhotoPath, 240)
+                PhotoStorage.showPhoto(findViewById(R.id.photoPreview), selectedPhotoPath, 240)
             }
         }
 
@@ -66,7 +56,7 @@ class ContactFormActivity : AppCompatActivity() {
             emailInput.setText(existingContact.email)
             addressInput.setText(existingContact.address)
             selectedPhotoPath = existingContact.photoUri
-            PhotoStorage.showInto(photoPreview, selectedPhotoPath, 240)
+            PhotoStorage.showPhoto(photoPreview, selectedPhotoPath, 240)
         }
 
         findViewById<MaterialCardView>(R.id.photoCard).setOnClickListener {
