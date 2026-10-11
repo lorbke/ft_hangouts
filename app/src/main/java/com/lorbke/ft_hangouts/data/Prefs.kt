@@ -3,9 +3,6 @@ package com.lorbke.ft_hangouts.data
 import android.content.Context
 import android.graphics.Color
 
-// A tiny persistent key/value store for simple app-wide settings. Unlike
-// SQLite there are no tables or SQL - just named values that survive app
-// restarts, backed by a small XML file the OS manages for us.
 object Prefs {
 
     private const val PREFS_NAME = "ft_hangouts_prefs"
