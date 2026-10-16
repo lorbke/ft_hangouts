@@ -1,7 +1,10 @@
 package com.lorbke.ft_hangouts.ui
 
 import android.Manifest
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
 import android.text.format.DateFormat
@@ -12,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.core.os.LocaleListCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +25,7 @@ import com.lorbke.ft_hangouts.R
 import com.lorbke.ft_hangouts.data.Contact
 import com.lorbke.ft_hangouts.data.ContactRepository
 import com.lorbke.ft_hangouts.data.Prefs
+import com.lorbke.ft_hangouts.sms.SmsReceiver
 import java.util.Date
 
 // home screen
@@ -31,6 +36,12 @@ class ContactListActivity : AppCompatActivity() {
     private lateinit var contactRepository: ContactRepository
     private val requestSmsPermissions =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { }
+
+    private val contactsChangedReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            loadContacts()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,21 +66,40 @@ class ContactListActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        ContextCompat.registerReceiver(
+            this,
+            contactsChangedReceiver,
+            IntentFilter(SmsReceiver.ACTION_MESSAGES_CHANGED),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unregisterReceiver(contactsChangedReceiver)
+    }
+
     // runs when screen is visited again and also after onCreate
     override fun onResume() {
         super.onResume()
+        loadContacts()
+
+        val backgroundTimestamp = Prefs.consumeBackgroundTimestamp(this)
+        if (backgroundTimestamp != null) {
+            val time = DateFormat.getTimeFormat(this).format(Date(backgroundTimestamp))
+            Toast.makeText(this, getString(R.string.backgrounded_at, time), Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun loadContacts() {
         val contacts = contactRepository.getAll()
         // trailing lambda here (the in-line function definition) is taken by the ContactAdapter constructer as the onContactClick parameter
         contactList.adapter = ContactAdapter(contacts) { contact ->
             val intent = Intent(this, ContactDetailActivity::class.java)
             intent.putExtra(Contact.EXTRA_ID, contact.id)
             startActivity(intent)
-        }
-
-        val backgroundTimestamp = Prefs.consumeBackgroundTimestamp(this)
-        if (backgroundTimestamp != null) {
-            val time = DateFormat.getTimeFormat(this).format(Date(backgroundTimestamp))
-            Toast.makeText(this, getString(R.string.backgrounded_at, time), Toast.LENGTH_LONG).show()
         }
     }
 

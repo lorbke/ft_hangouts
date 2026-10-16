@@ -29,5 +29,11 @@ class SmsReceiver : BroadcastReceiver() {
                 )
             )
         }
+
+        context.sendBroadcast(Intent(ACTION_MESSAGES_CHANGED).setPackage(context.packageName))
+    }
+
+    companion object {
+        const val ACTION_MESSAGES_CHANGED = "com.lorbke.ft_hangouts.MESSAGES_CHANGED"
     }
 }

@@ -18,7 +18,7 @@ class FtHangoutsApp : Application() {
 
             override fun onActivityStopped(activity: Activity) {
                 startedActivityCount--
-                if (startedActivityCount == 0) {
+                if (startedActivityCount == 0 && !activity.isChangingConfigurations) {
                     Prefs.setBackgroundTimestamp(this@FtHangoutsApp, System.currentTimeMillis())
                 }
             }

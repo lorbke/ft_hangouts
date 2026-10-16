@@ -59,6 +59,11 @@ class ContactFormActivity : AppCompatActivity() {
             PhotoStorage.showPhoto(photoPreview, selectedPhotoPath, 240)
         }
 
+        if (savedInstanceState != null) {
+            selectedPhotoPath = savedInstanceState.getString(KEY_PHOTO_PATH)
+            PhotoStorage.showPhoto(photoPreview, selectedPhotoPath, 240)
+        }
+
         findViewById<MaterialCardView>(R.id.photoCard).setOnClickListener {
             pickPhoto.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
@@ -86,5 +91,14 @@ class ContactFormActivity : AppCompatActivity() {
             Toast.makeText(this, R.string.contact_saved, Toast.LENGTH_SHORT).show()
             finish()
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(KEY_PHOTO_PATH, selectedPhotoPath)
+    }
+
+    companion object {
+        private const val KEY_PHOTO_PATH = "selected_photo_path"
     }
 }
